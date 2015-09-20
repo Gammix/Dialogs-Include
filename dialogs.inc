@@ -33,7 +33,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 #define DIALOG_STYLE_PREVMODEL 			(6)
 #define DIALOG_STYLE_PREVMODEL_LIST 	(DIALOG_STYLE_PREVMODEL + 1)
 
-#define DIALOG_SELECTION_COLOR 			(0xFF0000BB)
+#define DIALOG_SELECTION_COLOR 			(1677721750)
 #define DIALOG_MODELNONSELECTION_COLOR 	(169090660)
 #define DIALOG_BARNONSELECTION_COLOR 	(169093220)
 
@@ -718,7 +718,7 @@ stock static Dialog_Hide(playerid, bool:hidebase) {
 stock Dialog_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], button1[], button2[]) {
     if (dialogid <= -1) {
 		Dialog_Hide(playerid, true);
-		
+
 		g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
 		g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
 		g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
@@ -801,9 +801,9 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 
 		if (clickedid == Text:INVALID_TEXT_DRAW || clickedid == g_DialogBase[e_txtButtonRight][4]) {
    			Dialog_Hide(playerid, true);
-   			
+
    			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 0, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
-   			
+
 			g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
 			g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
 			g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
@@ -869,7 +869,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 								g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
 								g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
 								g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
-								
+
 								break;
 						    }
 
@@ -906,7 +906,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 								g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
 								g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
 								g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
-								
+
     							break;
 						    }
 
@@ -949,6 +949,22 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 #if defined Dialog_OnPlayerClickTextDraw
     forward Dialog_OnPlayerClickTextDraw(playerid, Text:clickedid);
 #endif
+
+stock Dialog_GetStyle(playerid) {
+	return g_PlayerDialogInfo[playerid][e_pDialogStyle];
+}
+
+stock Dialog_GetId(playerid) {
+	return g_PlayerDialogInfo[playerid][e_pDialogId];
+}
+
+stock Dialog_GetListitem(playerid) {
+	return g_PlayerDialogInfo[playerid][e_pDialogListitem];
+}
+
+stock Dialog_GetInfo(playerid, info[], maxlength = sizeof(info)) {
+	return GetPVarString(playerid, "Dialog_Info", info, maxlength);
+}
 
 stock ShowPlayerPreviewModelDialog(playerid, style, dialogid, caption[], models[], labels[][], button1[], button2[], size1 = sizeof(models), size2 = sizeof(labels)) {
 	if (dialogid <= -1) {
