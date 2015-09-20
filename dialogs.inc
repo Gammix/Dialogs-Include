@@ -1,5 +1,5 @@
 /*
-	Dialogs Include (dialogs.inc) - Version 2.0.2
+	Dialogs Include (dialogs.inc) - Version 2.0.3
 	* The one and only include which adds up new dialog styles to SAMP dialogs GUI.
 	* Current new dialog styles:
  		- DIALOG_STYLE_PREVMODEL
@@ -62,8 +62,7 @@ enum e_PLAYER_DIALOG_INFO {
 				e_pDialogListitem,
 				e_pDialogPage,
 				e_pDialogTick,
-	bool:       e_pDialogDualButtons,
-	bool:		e_pDialogCancelDetection
+	bool:       e_pDialogDualButtons
 };
 
 stock static
@@ -78,7 +77,7 @@ stock static
 ;
 
 stock Dialog_CancelSelectTextDraw(playerid) {
-	g_PlayerDialogInfo[playerid][e_pDialogCancelDetection] = true;
+ 	SetPVarInt(playerid, "Dialog_Cancel", 1);
 	CancelSelectTextDraw(playerid);
 }
 #if defined _ALS_CancelSelectTextDraw
@@ -148,7 +147,7 @@ stock static Dialog_PTDCreate(&PlayerText:var, playerid, Float:posX, Float:posY,
 
 	if (GetSVarInt("Dialog_Platforms") <= 1) {
 	    Dialog_TDCreate("e_txtHeaderBox", g_DialogBase[e_txtHeaderBox], 173.000000, 122.000000, "_", 50, 1, 0.000000, 0.599999, -1, 0, 0, 1, 1, 1, 200, 462.000000, 19.000000);
-
+		
 		Dialog_TDCreate("e_txtContentBox_0", g_DialogBase[e_txtContentBox][0], 173.000000, 131.000000, "_", 50, 1, 0.000000, 21.599998, -1, 0, 0, 1, 1, 1, 150, 462.000000, 19.000000);
 		Dialog_TDCreate("e_txtContentBox_1", g_DialogBase[e_txtContentBox][1], 177.000000, 135.000000, "_", 50, 1, 0.000000, 18.299997, -1, 0, 0, 1, 1, 1, 100, 458.000000, 19.000000);
 		Dialog_TDCreate("e_txtContentBox_2", g_DialogBase[e_txtContentBox][2], 177.000000, 134.000000, "_", 50, 1, 0.000000, 18.499998, -1, 0, 0, 1, 1, 1, -106, 173.000000, 19.000000);
@@ -211,7 +210,7 @@ stock static Dialog_PTDCreate(&PlayerText:var, playerid, Float:posX, Float:posY,
 	}
 	else {
 		g_DialogBase[e_txtHeaderBox] = Text:GetSVarInt("e_txtHeaderBox");
-
+		
 		g_DialogBase[e_txtContentBox][0] = Text:GetSVarInt("e_txtContentBox_0");
 		g_DialogBase[e_txtContentBox][1] = Text:GetSVarInt("e_txtContentBox_1");
 		g_DialogBase[e_txtContentBox][2] = Text:GetSVarInt("e_txtContentBox_2");
@@ -591,6 +590,8 @@ stock static Dialog_ShowListitem(playerid, index, model, label[], bool:selected 
 					if (t_iCount == 6) {
 		   				t_fPos[0] = 181.000000;
 				     	t_fPos[1] += 42.000000;
+				     	
+				     	t_iCount = 0;
 				    }
 				}
 
@@ -690,49 +691,44 @@ stock static Dialog_HideList(playerid) {
 	}
 }
 
-forward Dialog_Hide(playerid, playeronly);
-public  Dialog_Hide(playerid, playeronly) {
-    if (g_PlayerDialogInfo[playerid][e_pDialogStyle] >= DIALOG_STYLE_PREVMODEL) {
-	 	if (! playeronly) {
-		 	Dialog_HideBase(playerid);
+forward Dialog_Hide(playerid, hidebase);
+public  Dialog_Hide(playerid, hidebase) {
+	if (g_PlayerDialogInfo[playerid][e_pDialogId] >= 0) {
+	    if (g_PlayerDialogInfo[playerid][e_pDialogStyle] >= DIALOG_STYLE_PREVMODEL) {
+		 	if (hidebase) {
+			 	Dialog_HideBase(playerid);
+			}
+			Dialog_HideHUDS(playerid);
+			Dialog_HideList(playerid);
+
+			CancelSelectTextDraw(playerid);
 		}
-		Dialog_HideHUDS(playerid);
-		Dialog_HideList(playerid);
+		else {
+	    	ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
+		}
 
-		CancelSelectTextDraw(playerid);
+		g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
+		g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
+		g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
+		g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
+		g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
+		g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
+
+		DeletePVar(playerid, "Dialog_Info");
 	}
-
-	g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
-	g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
-	g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
-	g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
-	g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
-	g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
-
-	DeletePVar(playerid, "Dialog_Info");
 }
 
 stock Dialog_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], button1[], button2[]) {
     if (dialogid <= -1) {
-		if (0 <= g_PlayerDialogInfo[playerid][e_pDialogStyle] < DIALOG_STYLE_PREVMODEL) {
-  			ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
-    	}
-	    else {
-			CallRemoteFunction("Dialog_Hide", "ii", playerid, 0);
-   		}
-
+		CallRemoteFunction("Dialog_Hide", "ii", playerid, 1);
+		
 		return true;
 	}
 
 	switch (style) {
 		case DIALOG_STYLE_PREVMODEL, DIALOG_STYLE_PREVMODEL_LIST: {
-		    if (0 <= g_PlayerDialogInfo[playerid][e_pDialogStyle] < DIALOG_STYLE_PREVMODEL) {
-		        ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
-		    }
-		    else {
-				CallRemoteFunction("Dialog_Hide", "ii", playerid, 1);
-		    }
-		    
+			CallRemoteFunction("Dialog_Hide", "ii", playerid, 0);
+
             SetPVarString(playerid, "Dialog_Info", info);
 
 			g_PlayerDialogInfo[playerid][e_pDialogStyle] = style;
@@ -767,7 +763,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], butt
 		}
 
 		default: {
-		    CallRemoteFunction("Dialog_Hide", "ii", playerid, 0);
+			CallRemoteFunction("Dialog_Hide", "ii", playerid, 1);
 
             SetPVarString(playerid, "Dialog_Info", info);
 
@@ -776,7 +772,7 @@ stock Dialog_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], butt
 			g_PlayerDialogInfo[playerid][e_pDialogListitem] = 0;
 			g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
 			g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
-		    
+
             ShowPlayerDialog(playerid, dialogid, style, caption, info, button1, button2);
 		}
 	}
@@ -791,34 +787,20 @@ stock Dialog_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], butt
 #define ShowPlayerDialog Dialog_ShowPlayerDialog
 
 public OnPlayerClickTextDraw(playerid, Text:clickedid) {
-	if (! g_PlayerDialogInfo[playerid][e_pDialogCancelDetection] && g_PlayerDialogInfo[playerid][e_pDialogStyle] != -1) {
+	if (GetPVarType(playerid, "Dialog_Cancel") == PLAYER_VARTYPE_NONE && g_PlayerDialogInfo[playerid][e_pDialogId] >= 0) {
 		new
 			t_sSplit[DIALOG_MAXINFO_SIZE][30],
    			t_sInfo[DIALOG_MAXINFO_SIZE * 2]
 		;
 
 		if (clickedid == Text:INVALID_TEXT_DRAW || clickedid == g_DialogBase[e_txtButtonRight][4]) {
-			if (funcidx("OnDialogResponse") != -1) {
-				if (! CallLocalFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 0, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)")) {
-					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 0, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
-				}
-			}
-			else {
-				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 0, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
-			}
+			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 0, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
 
 			Dialog_ShowPlayerDialog(playerid, -1, DIALOG_STYLE_PREVMODEL, "", "", "", "");
 		}
 		else if (clickedid == g_DialogBase[e_txtButtonLeft][4] || clickedid == g_DialogBase[e_txtButtonCenter][4]) {
-			if (funcidx("OnDialogResponse") != -1) {
-				if (! CallLocalFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)")) {
-					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
-				}
-			}
-			else {
-				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
-			}
-
+			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
+    		
 			Dialog_ShowPlayerDialog(playerid, -1, DIALOG_STYLE_PREVMODEL, "", "", "", "");
 		}
 		else if (clickedid == g_DialogBase[e_txtScrollUp][0]) {
@@ -855,18 +837,9 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 				    if (t_iIndex < DIALOG_STYLE1_ITEMSPERPAGE) {
 						if (clickedid == g_txtDialogModels[t_iIndex]) {
 						    if ((GetTickCount() - g_PlayerDialogInfo[playerid][e_pDialogTick]) <= 200) {
-								if (funcidx("OnDialogResponse") != -1) {
-									if (! CallLocalFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)")) {
-										CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
-									}
-								}
-								else {
-									CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
-								}
-
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
+								
 								Dialog_ShowPlayerDialog(playerid, -1, DIALOG_STYLE_PREVMODEL, "", "", "", "");
-
-								g_PlayerDialogInfo[playerid][e_pDialogTick] = GetTickCount();
 
 						        break;
 						    }
@@ -894,18 +867,9 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 				    if (t_iIndex < DIALOG_STYLE2_ITEMSPERPAGE) {
 						if (clickedid == g_txtDialogBars_List[t_iIndex]) {
 						    if ((GetTickCount() - g_PlayerDialogInfo[playerid][e_pDialogTick]) <= 200) {
-								if (funcidx("OnDialogResponse") != -1) {
-									if (! CallLocalFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE2_ITEMSPERPAGE)), "(null)")) {
-										CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE2_ITEMSPERPAGE)), "(null)");
-									}
-								}
-								else {
-									CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE2_ITEMSPERPAGE)), "(null)");
-								}
-
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
+								
 								Dialog_ShowPlayerDialog(playerid, -1, DIALOG_STYLE_PREVMODEL, "", "", "", "");
-
-								g_PlayerDialogInfo[playerid][e_pDialogTick] = GetTickCount();
 
 						        break;
 						    }
@@ -931,7 +895,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 		}
 	}
 	else {
-		g_PlayerDialogInfo[playerid][e_pDialogCancelDetection] = false;
+ 		DeletePVar(playerid, "Dialog_Cancel");
 	}
 
     #if defined Dialog_OnPlayerClickTextDraw
