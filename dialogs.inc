@@ -24,7 +24,7 @@ native Dialog_GetId(playerid);
 native Dialog_GetListitem(playerid);
 native Dialog_GetInfo(playerid, info[], maxlength = sizeof(info));
 native _
-native ShowPlayerPreviewModelDialog(playerid, style, dialogid, caption[], models[], labels[][], button1[], button2[], size1 = sizeof(models), size2 = sizeof(labels));
+native ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[], labels[][], button1[], button2[], size1 = sizeof(models), size2 = sizeof(labels));
 
 CALLBACKS:
 public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
@@ -44,7 +44,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 
 #define Dialog_CountPages(%0,%1) 		(((%0)-1)/(%1)+1)
 
-#pragma dynamic 						(100000)
+#pragma dynamic 						(1000000)
 
 enum e_DIALOG_BASE {
 	Text:   	e_txtHeaderBox,
@@ -632,7 +632,7 @@ stock static Dialog_ShowListitem(playerid, index, model, label[], bool:selected 
 
 stock static Dialog_ShowList(playerid, info[], page, selected) {
 	new
-	    t_sSplit[DIALOG_MAXINFO_SIZE][30],
+	    t_sSplit[DIALOG_MAXINFO_SIZE][200],
 	    t_iSplitSize = Dialog_Split(info, t_sSplit, '\n'),
 	    t_iSplitItems
 	;
@@ -800,30 +800,32 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 		;
 
 		if (clickedid == Text:INVALID_TEXT_DRAW || clickedid == g_DialogBase[e_txtButtonRight][4]) {
-   			Dialog_Hide(playerid, true);
+			Dialog_Hide(playerid, true);
 
-   			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 0, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
-
+			new
+	   			t_iId = g_PlayerDialogInfo[playerid][e_pDialogId],
+	   			t_iListitem = g_PlayerDialogInfo[playerid][e_pDialogListitem]
+	   		;
 			g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
 			g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
 			g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
-			g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
-			g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
-			g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
-
 			DeletePVar(playerid, "Dialog_Info");
+	   		
+			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, t_iId, 0, t_iListitem, "(null)");
 		}
 		else if (clickedid == g_DialogBase[e_txtButtonLeft][4] || clickedid == g_DialogBase[e_txtButtonCenter][4]) {
 			Dialog_Hide(playerid, true);
-
-			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, g_PlayerDialogInfo[playerid][e_pDialogListitem], "(null)");
-
+			
+			new
+	   			t_iId = g_PlayerDialogInfo[playerid][e_pDialogId],
+	   			t_iListitem = g_PlayerDialogInfo[playerid][e_pDialogListitem]
+	   		;
 			g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
 			g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
 			g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
-			g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
-			g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
-			g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
+			DeletePVar(playerid, "Dialog_Info");
+
+			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, t_iId, 1, t_iListitem, "(null)");
 		}
 		else if (clickedid == g_DialogBase[e_txtScrollUp][0]) {
 			GetPVarString(playerid, "Dialog_Info", t_sInfo, sizeof(t_sInfo));
@@ -861,14 +863,15 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 						    if ((GetTickCount() - g_PlayerDialogInfo[playerid][e_pDialogTick]) <= 200) {
 								Dialog_Hide(playerid, true);
 
-								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
-
+								new
+						   			t_iId = g_PlayerDialogInfo[playerid][e_pDialogId]
+						   		;
 								g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
 								g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
 								g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
-								g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
-								g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
-								g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
+								DeletePVar(playerid, "Dialog_Info");
+
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, t_iId, 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
 
 								break;
 						    }
@@ -898,14 +901,15 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 						    if ((GetTickCount() - g_PlayerDialogInfo[playerid][e_pDialogTick]) <= 200) {
 								Dialog_Hide(playerid, true);
 
-								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, g_PlayerDialogInfo[playerid][e_pDialogId], 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
-
+								new
+						   			t_iId = g_PlayerDialogInfo[playerid][e_pDialogId]
+						   		;
 								g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
 								g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
 								g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
-								g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
-								g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
-								g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
+								DeletePVar(playerid, "Dialog_Info");
+
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, t_iId, 1, (t_iIndex + (g_PlayerDialogInfo[playerid][e_pDialogPage] * DIALOG_STYLE1_ITEMSPERPAGE)), "(null)");
 
     							break;
 						    }
@@ -966,25 +970,24 @@ stock Dialog_GetInfo(playerid, info[], maxlength = sizeof(info)) {
 	return GetPVarString(playerid, "Dialog_Info", info, maxlength);
 }
 
-stock ShowPlayerPreviewModelDialog(playerid, style, dialogid, caption[], models[], labels[][], button1[], button2[], size1 = sizeof(models), size2 = sizeof(labels)) {
-	if (dialogid <= -1) {
-		if (0 <= g_PlayerDialogInfo[playerid][e_pDialogStyle] < DIALOG_STYLE_PREVMODEL) {
-  			ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
-    	}
-	    else {
-			CallRemoteFunction("Dialog_Hide", "ii", playerid, 0);
-   		}
+stock ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[], labels[][], button1[], button2[], size1 = sizeof(models), size2 = sizeof(labels)) {
+    if (dialogid <= -1) {
+		Dialog_Hide(playerid, true);
+
+		g_PlayerDialogInfo[playerid][e_pDialogStyle] = -1;
+		g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
+		g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
+		g_PlayerDialogInfo[playerid][e_pDialogPage] = 0;
+		g_PlayerDialogInfo[playerid][e_pDialogTick] = 0;
+		g_PlayerDialogInfo[playerid][e_pDialogDualButtons] = true;
+
+		DeletePVar(playerid, "Dialog_Info");
 
 		return true;
 	}
 
 	if (style == DIALOG_STYLE_PREVMODEL || style == DIALOG_STYLE_PREVMODEL_LIST) {
-		if (0 <= g_PlayerDialogInfo[playerid][e_pDialogStyle] < DIALOG_STYLE_PREVMODEL) {
-		 	ShowPlayerDialog(playerid, -1, DIALOG_STYLE_MSGBOX, "", "", "", "");
-		}
-  		else {
-			CallRemoteFunction("Dialog_Hide", "ii", playerid, 1);
-		}
+		Dialog_Hide(playerid, false);
 
 		new
 		    sBuffer[DIALOG_MAXINFO_SIZE]
