@@ -94,9 +94,8 @@ stock Dialog_CancelSelectTextDraw(playerid) {
 #endif
 #define CancelSelectTextDraw Dialog_CancelSelectTextDraw
 
-stock static Dialog_TDCreate(varname[], &Text:var, Float:posX, Float:posY, string[], bgcolor, font, Float:lettersizeX, Float:lettersizeY, textcolor, allign = 0, outline = 1, proportional = 1, shadow = 1, usebox = 0, boxcolor = 0, Float:textsizeX = -1.0, Float:textsizeY = -1.0, model = 0, Float:rotX = 0.0, Float:rotY = 0.0, Float:rotZ = 0.0, Float:zoom = 1.0, selectable = 0) {
+stock static Dialog_TDCreate(&Text:var, Float:posX, Float:posY, string[], bgcolor, font, Float:lettersizeX, Float:lettersizeY, textcolor, allign = 0, outline = 1, proportional = 1, shadow = 1, usebox = 0, boxcolor = 0, Float:textsizeX = -1.0, Float:textsizeY = -1.0, model = 0, Float:rotX = 0.0, Float:rotY = 0.0, Float:rotZ = 0.0, Float:zoom = 1.0, selectable = 0) {
     var = TextDrawCreate(posX, posY, string);
-    SetSVarInt(varname, _:var);
 
 	TextDrawBackgroundColor(var, bgcolor);
 	TextDrawFont(var, font);
@@ -150,123 +149,62 @@ stock static Dialog_PTDCreate(&PlayerText:var, playerid, Float:posX, Float:posY,
 	public OnGameModeInit() {
 #endif
 
-	SetSVarInt("Dialog_Platforms", GetSVarInt("Dialog_Platforms") + 1);
+	Dialog_TDCreate(g_DialogBase[e_txtHeaderBox], 173.000000, 122.000000, "_", 50, 1, 0.000000, 0.599999, -1, 0, 0, 1, 1, 1, 200, 462.000000, 19.000000);
 
-	if (GetSVarInt("Dialog_Platforms") <= 1) {
-	    Dialog_TDCreate("e_txtHeaderBox", g_DialogBase[e_txtHeaderBox], 173.000000, 122.000000, "_", 50, 1, 0.000000, 0.599999, -1, 0, 0, 1, 1, 1, 200, 462.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtContentBox][0], 173.000000, 131.000000, "_", 50, 1, 0.000000, 21.599998, -1, 0, 0, 1, 1, 1, 150, 462.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtContentBox][1], 177.000000, 135.000000, "_", 50, 1, 0.000000, 18.299997, -1, 0, 0, 1, 1, 1, 100, 458.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtContentBox][2], 177.000000, 134.000000, "_", 50, 1, 0.000000, 18.499998, -1, 0, 0, 1, 1, 1, -106, 173.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtContentBox][3], 454.000000, 135.000000, "_", 50, 1, 0.000000, 18.299997, -1, 0, 0, 1, 1, 1, -106, 452.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtContentBox][4], 461.000000, 135.000000, "_", 50, 1, 0.000000, 18.299997, -1, 0, 0, 1, 1, 1, -106, 459.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtContentBox][5], 462.000000, 134.000000, "_", 50, 1, 0.000000, -0.300001, -1, 0, 0, 1, 1, 1, -106, 174.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtContentBox][6], 462.000000, 304.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 173.000000, 19.000000);
 
-		Dialog_TDCreate("e_txtContentBox_0", g_DialogBase[e_txtContentBox][0], 173.000000, 131.000000, "_", 50, 1, 0.000000, 21.599998, -1, 0, 0, 1, 1, 1, 150, 462.000000, 19.000000);
-		Dialog_TDCreate("e_txtContentBox_1", g_DialogBase[e_txtContentBox][1], 177.000000, 135.000000, "_", 50, 1, 0.000000, 18.299997, -1, 0, 0, 1, 1, 1, 100, 458.000000, 19.000000);
-		Dialog_TDCreate("e_txtContentBox_2", g_DialogBase[e_txtContentBox][2], 177.000000, 134.000000, "_", 50, 1, 0.000000, 18.499998, -1, 0, 0, 1, 1, 1, -106, 173.000000, 19.000000);
-		Dialog_TDCreate("e_txtContentBox_3", g_DialogBase[e_txtContentBox][3], 454.000000, 135.000000, "_", 50, 1, 0.000000, 18.299997, -1, 0, 0, 1, 1, 1, -106, 452.000000, 19.000000);
-		Dialog_TDCreate("e_txtContentBox_4", g_DialogBase[e_txtContentBox][4], 461.000000, 135.000000, "_", 50, 1, 0.000000, 18.299997, -1, 0, 0, 1, 1, 1, -106, 459.000000, 19.000000);
-		Dialog_TDCreate("e_txtContentBox_5", g_DialogBase[e_txtContentBox][5], 462.000000, 134.000000, "_", 50, 1, 0.000000, -0.300001, -1, 0, 0, 1, 1, 1, -106, 174.000000, 19.000000);
-		Dialog_TDCreate("e_txtContentBox_6", g_DialogBase[e_txtContentBox][6], 462.000000, 304.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 173.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtScrollUp][0], 453.000000, 133.000000, "LD_POOL:ball", 50, 4, 0.500000, 1.000000, -106, 0, 0, 1, 1, 1, 255, 7.000000, 9.00000, .selectable = 1);
+	Dialog_TDCreate(g_DialogBase[e_txtScrollUp][1], 454.000000, 134.000000, "LD_BEAT:up", 255, 4, 0.500000, 1.000000, 255, 0, 0, 1, 1, 1, 255, 5.000000, 6.000000);
 
-		Dialog_TDCreate("e_txtScrollUp_0", g_DialogBase[e_txtScrollUp][0], 453.000000, 133.000000, "LD_POOL:ball", 50, 4, 0.500000, 1.000000, -106, 0, 0, 1, 1, 1, 255, 7.000000, 9.00000, .selectable = 1);
-		Dialog_TDCreate("e_txtScrollUp_1", g_DialogBase[e_txtScrollUp][1], 454.000000, 134.000000, "LD_BEAT:up", 255, 4, 0.500000, 1.000000, 255, 0, 0, 1, 1, 1, 255, 5.000000, 6.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtScrollDown][0], 453.000000, 293.000000, "LD_POOL:ball", 50, 4, 0.500000, 1.000000, -106, 0, 0, 1, 1, 1, 255, 7.000000, 9.00000, .selectable = 1);
+	Dialog_TDCreate(g_DialogBase[e_txtScrollDown][1], 454.000000, 295.000000, "LD_BEAT:down", 255, 4, 0.500000, 1.000000, 255, 0, 0, 1, 1, 1, 255, 5.000000, 6.000000);
 
-		Dialog_TDCreate("e_txtScrollDown_0", g_DialogBase[e_txtScrollDown][0], 453.000000, 293.000000, "LD_POOL:ball", 50, 4, 0.500000, 1.000000, -106, 0, 0, 1, 1, 1, 255, 7.000000, 9.00000, .selectable = 1);
-		Dialog_TDCreate("e_txtScrollDown_1", g_DialogBase[e_txtScrollDown][1], 454.000000, 295.000000, "LD_BEAT:down", 255, 4, 0.500000, 1.000000, 255, 0, 0, 1, 1, 1, 255, 5.000000, 6.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonLeft][0], 302.000000, 310.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 253.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonLeft][1], 302.000000, 324.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 253.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonLeft][2], 253.000000, 304.000000, "(", 0, 1, 0.200000, 2.000000, -106, 0, 0, 1, 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonLeft][3], 299.000000, 304.000000, ")", 0, 1, 0.200000, 2.000000, -106, 0, 0, 1, 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonLeft][4], 254.000000, 309.000000, "ld_plan:tvbase", 50, 4, 0.000000, 0.899998, 255, 0, 0, 1, 1, 1, 255, 46.000000, 13.000000, .selectable = 1);
 
-		Dialog_TDCreate("e_txtButtonLeft_0", g_DialogBase[e_txtButtonLeft][0], 302.000000, 310.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 253.000000, 19.000000);
-		Dialog_TDCreate("e_txtButtonLeft_1", g_DialogBase[e_txtButtonLeft][1], 302.000000, 324.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 253.000000, 19.000000);
-		Dialog_TDCreate("e_txtButtonLeft_2", g_DialogBase[e_txtButtonLeft][2], 253.000000, 304.000000, "(", 0, 1, 0.200000, 2.000000, -106, 0, 0, 1, 1);
-		Dialog_TDCreate("e_txtButtonLeft_3", g_DialogBase[e_txtButtonLeft][3], 299.000000, 304.000000, ")", 0, 1, 0.200000, 2.000000, -106, 0, 0, 1, 1);
-		Dialog_TDCreate("e_txtButtonLeft_4", g_DialogBase[e_txtButtonLeft][4], 254.000000, 309.000000, "ld_plan:tvbase", 50, 4, 0.000000, 0.899998, 255, 0, 0, 1, 1, 1, 255, 46.000000, 13.000000, .selectable = 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonRight][0], 372.000000, 310.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 323.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonRight][1], 372.000000, 324.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 323.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonRight][2], 323.000000, 304.000000, "(", 0, 1, 0.210000, 2.000000, -106, 0, 0, 1, 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonRight][3], 369.000000, 304.000000, ")", 0, 1, 0.230000, 1.999999, -106, 0, 0, 1, 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonRight][4], 324.000000, 309.000000, "ld_plan:tvbase", 50, 4, 0.000000, 0.899998, 255, 0, 0, 1, 1, 1, 255, 46.000000, 13.000000, .selectable = 1);
 
-		Dialog_TDCreate("e_txtButtonRight_0", g_DialogBase[e_txtButtonRight][0], 372.000000, 310.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 323.000000, 19.000000);
-		Dialog_TDCreate("e_txtButtonRight_1", g_DialogBase[e_txtButtonRight][1], 372.000000, 324.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 323.000000, 19.000000);
-		Dialog_TDCreate("e_txtButtonRight_2", g_DialogBase[e_txtButtonRight][2], 323.000000, 304.000000, "(", 0, 1, 0.210000, 2.000000, -106, 0, 0, 1, 1);
-		Dialog_TDCreate("e_txtButtonRight_3", g_DialogBase[e_txtButtonRight][3], 369.000000, 304.000000, ")", 0, 1, 0.230000, 1.999999, -106, 0, 0, 1, 1);
-		Dialog_TDCreate("e_txtButtonRight_4", g_DialogBase[e_txtButtonRight][4], 324.000000, 309.000000, "ld_plan:tvbase", 50, 4, 0.000000, 0.899998, 255, 0, 0, 1, 1, 1, 255, 46.000000, 13.000000, .selectable = 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonCenter][0], 342.000000, 310.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 293.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonCenter][1], 342.000000, 324.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 293.000000, 19.000000);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonCenter][2], 293.000000, 304.000000, "(", 0, 1, 0.200000, 2.000000, -106, 0, 0, 1, 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonCenter][3], 339.000000, 304.000000, ")", 0, 1, 0.219999, 2.000000, -106, 0, 0, 1, 1);
+	Dialog_TDCreate(g_DialogBase[e_txtButtonCenter][4], 294.000000, 309.000000, "ld_plan:tvbase", 50, 4, 0.000000, 0.899998, 255, 0, 0, 1, 1, 1, 255, 46.000000, 13.000000, .selectable = 1);
 
-		Dialog_TDCreate("e_txtButtonCenter_0", g_DialogBase[e_txtButtonCenter][0], 342.000000, 310.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 293.000000, 19.000000);
-		Dialog_TDCreate("e_txtButtonCenter_1", g_DialogBase[e_txtButtonCenter][1], 342.000000, 324.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 293.000000, 19.000000);
-		Dialog_TDCreate("e_txtButtonCenter_2", g_DialogBase[e_txtButtonCenter][2], 293.000000, 304.000000, "(", 0, 1, 0.200000, 2.000000, -106, 0, 0, 1, 1);
-		Dialog_TDCreate("e_txtButtonCenter_3", g_DialogBase[e_txtButtonCenter][3], 339.000000, 304.000000, ")", 0, 1, 0.219999, 2.000000, -106, 0, 0, 1, 1);
-		Dialog_TDCreate("e_txtButtonCenter_4", g_DialogBase[e_txtButtonCenter][4], 294.000000, 309.000000, "ld_plan:tvbase", 50, 4, 0.000000, 0.899998, 255, 0, 0, 1, 1, 1, 255, 46.000000, 13.000000, .selectable = 1);
+	new
+		t_iCount = 0,
+	    Float:t_fBase[2] = {179.000000, 134.000000}
+	;
+	for (new i = 0; i < DIALOG_STYLE1_ITEMSPERPAGE; i++) {
+		Dialog_TDCreate(g_txtDialogModels[i], t_fBase[0], t_fBase[1], "_", DIALOG_MODELNONSELECTION_COLOR, 5, 0.129998, 0.799998, -1, 0, 0, 1, 1, 1, 0, 44.000000, 41.000000, .selectable = 1);
 
-		new
-			t_iCount = 0,
-		    Float:t_fBase[2] = {179.000000, 134.000000},
-		    t_sVarname[40]
-		;
-		for (new i = 0; i < DIALOG_STYLE1_ITEMSPERPAGE; i++) {
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogModels_%i", i);
-			Dialog_TDCreate(t_sVarname, g_txtDialogModels[i], t_fBase[0], t_fBase[1], "_", DIALOG_MODELNONSELECTION_COLOR, 5, 0.129998, 0.799998, -1, 0, 0, 1, 1, 1, 0, 44.000000, 41.000000, .selectable = 1);
+        t_fBase[0] += 45.000000;
+        t_iCount += 1;
+        if (t_iCount == 6) {
+			t_fBase[0] = 179.000000;
+	        t_fBase[1] += 42.000000;
 
-	        t_fBase[0] += 45.000000;
-	        t_iCount += 1;
-
-	        if (t_iCount == 6) {
-	            t_fBase[0] = 179.000000;
-	            t_fBase[1] += 42.000000;
-
-	            t_iCount = 0;
-			}
-		}
-
-		for (new i = 0; i < DIALOG_STYLE2_ITEMSPERPAGE; i++) {
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogModels_List_%i", i);
-			Dialog_TDCreate(t_sVarname, g_txtDialogModels_List[i], 178.000000, (134.000000 + (33.0 * i)), "_", DIALOG_MODELNONSELECTION_COLOR, 5, 0.129997, 0.799997, -1, 0, 0, 1, 1, 1, 0, 34.000000, 30.000000);
-
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogBars_List_%i", i);
-			Dialog_TDCreate(t_sVarname, g_txtDialogBars_List[i], 177.000000, (134.000000 + (33.0 * i)), "ld_plan:tvbase", 50, 4, 0.129997, 0.799997, DIALOG_BARNONSELECTION_COLOR, 0, 0, 1, 1, 1, 0, 274.000000, 32.000000, .selectable = 1);
-		}
-	}
-	else {
-		g_DialogBase[e_txtHeaderBox] = Text:GetSVarInt("e_txtHeaderBox");
-
-		g_DialogBase[e_txtContentBox][0] = Text:GetSVarInt("e_txtContentBox_0");
-		g_DialogBase[e_txtContentBox][1] = Text:GetSVarInt("e_txtContentBox_1");
-		g_DialogBase[e_txtContentBox][2] = Text:GetSVarInt("e_txtContentBox_2");
-		g_DialogBase[e_txtContentBox][3] = Text:GetSVarInt("e_txtContentBox_3");
-		g_DialogBase[e_txtContentBox][4] = Text:GetSVarInt("e_txtContentBox_4");
-		g_DialogBase[e_txtContentBox][5] = Text:GetSVarInt("e_txtContentBox_5");
-		g_DialogBase[e_txtContentBox][6] = Text:GetSVarInt("e_txtContentBox_6");
-
-		g_DialogBase[e_txtScrollUp][0] = Text:GetSVarInt("e_txtScrollUp_0");
-		g_DialogBase[e_txtScrollUp][1] = Text:GetSVarInt("e_txtScrollUp_1");
-
-		g_DialogBase[e_txtScrollDown][0] = Text:GetSVarInt("e_txtScrollDown_0");
-		g_DialogBase[e_txtScrollDown][1] = Text:GetSVarInt("e_txtScrollDown_1");
-
-		g_DialogBase[e_txtButtonLeft][0] = Text:GetSVarInt("e_txtButtonLeft_0");
-		g_DialogBase[e_txtButtonLeft][1] = Text:GetSVarInt("e_txtButtonLeft_1");
-		g_DialogBase[e_txtButtonLeft][2] = Text:GetSVarInt("e_txtButtonLeft_2");
-		g_DialogBase[e_txtButtonLeft][3] = Text:GetSVarInt("e_txtButtonLeft_3");
-		g_DialogBase[e_txtButtonLeft][4] = Text:GetSVarInt("e_txtButtonLeft_4");
-
-		g_DialogBase[e_txtButtonRight][0] = Text:GetSVarInt("e_txtButtonRight_0");
-		g_DialogBase[e_txtButtonRight][1] = Text:GetSVarInt("e_txtButtonRight_1");
-		g_DialogBase[e_txtButtonRight][2] = Text:GetSVarInt("e_txtButtonRight_2");
-		g_DialogBase[e_txtButtonRight][3] = Text:GetSVarInt("e_txtButtonRight_3");
-		g_DialogBase[e_txtButtonRight][4] = Text:GetSVarInt("e_txtButtonRight_4");
-
-		g_DialogBase[e_txtButtonCenter][0] = Text:GetSVarInt("e_txtButtonCenter_0");
-		g_DialogBase[e_txtButtonCenter][1] = Text:GetSVarInt("e_txtButtonCenter_1");
-		g_DialogBase[e_txtButtonCenter][2] = Text:GetSVarInt("e_txtButtonCenter_2");
-		g_DialogBase[e_txtButtonCenter][3] = Text:GetSVarInt("e_txtButtonCenter_3");
-		g_DialogBase[e_txtButtonCenter][4] = Text:GetSVarInt("e_txtButtonCenter_4");
-
-		new
-		    t_sVarname[40]
-		;
-		for (new i = 0; i < DIALOG_STYLE1_ITEMSPERPAGE; i++) {
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogModels_%i", i);
-			g_txtDialogModels[i] = Text:GetSVarInt(t_sVarname);
-		}
-
-		for (new i = 0; i < DIALOG_STYLE2_ITEMSPERPAGE; i++) {
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogModels_List_%i", i);
-			g_txtDialogModels_List[i] = Text:GetSVarInt(t_sVarname);
-
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogBars_List_%i", i);
-			g_txtDialogBars_List[i] = Text:GetSVarInt(t_sVarname);
+            t_iCount = 0;
 		}
 	}
 
+	for (new i = 0; i < DIALOG_STYLE2_ITEMSPERPAGE; i++) {
+		Dialog_TDCreate(g_txtDialogModels_List[i], 178.000000, (134.000000 + (33.0 * i)), "_", DIALOG_MODELNONSELECTION_COLOR, 5, 0.129997, 0.799997, -1, 0, 0, 1, 1, 1, 0, 34.000000, 30.000000);
+		Dialog_TDCreate(g_txtDialogBars_List[i], 177.000000, (134.000000 + (33.0 * i)), "ld_plan:tvbase", 50, 4, 0.129997, 0.799997, DIALOG_BARNONSELECTION_COLOR, 0, 0, 1, 1, 1, 0, 274.000000, 32.000000, .selectable = 1);
+	}
+	
 #if defined FILTERSCRIPT
 	    #if defined Dialog_OnFilterScriptInit
 			return Dialog_OnFilterScriptInit();
@@ -307,88 +245,47 @@ stock static Dialog_PTDCreate(&PlayerText:var, playerid, Float:posX, Float:posY,
 	public OnGameModeExit() {
 #endif
 
-	SetSVarInt("Dialog_Platforms", GetSVarInt("Dialog_Platforms") - 1);
-	if (GetSVarInt("Dialog_Platforms") <= 0) {
-		DeleteSVar("Dialog_Platforms");
+	TextDrawDestroy(g_DialogBase[e_txtHeaderBox]);
 
-		TextDrawDestroy(g_DialogBase[e_txtHeaderBox]);
-		DeleteSVar("e_txtHeaderBox");
+	TextDrawDestroy(g_DialogBase[e_txtContentBox][0]);
+	TextDrawDestroy(g_DialogBase[e_txtContentBox][1]);
+	TextDrawDestroy(g_DialogBase[e_txtContentBox][2]);
+	TextDrawDestroy(g_DialogBase[e_txtContentBox][3]);
+	TextDrawDestroy(g_DialogBase[e_txtContentBox][4]);
+	TextDrawDestroy(g_DialogBase[e_txtContentBox][5]);
+	TextDrawDestroy(g_DialogBase[e_txtContentBox][6]);
+	
+	TextDrawDestroy(g_DialogBase[e_txtScrollUp][0]);
+	TextDrawDestroy(g_DialogBase[e_txtScrollUp][1]);
+		
+	TextDrawDestroy(g_DialogBase[e_txtScrollDown][0]);
+	TextDrawDestroy(g_DialogBase[e_txtScrollDown][1]);
+		
+	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][0]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][1]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][2]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][3]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][4]);
+		
+	TextDrawDestroy(g_DialogBase[e_txtButtonRight][0]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonRight][1]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonRight][2]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonRight][3]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonRight][4]);
+	
+	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][0]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][1]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][2]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][3]);
+	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][4]);
 
-		TextDrawDestroy(g_DialogBase[e_txtContentBox][0]);
-		TextDrawDestroy(g_DialogBase[e_txtContentBox][1]);
-		TextDrawDestroy(g_DialogBase[e_txtContentBox][2]);
-		TextDrawDestroy(g_DialogBase[e_txtContentBox][3]);
-		TextDrawDestroy(g_DialogBase[e_txtContentBox][4]);
-		TextDrawDestroy(g_DialogBase[e_txtContentBox][5]);
-		TextDrawDestroy(g_DialogBase[e_txtContentBox][6]);
-		DeleteSVar("e_txtContentBox_0");
-		DeleteSVar("e_txtContentBox_1");
-		DeleteSVar("e_txtContentBox_2");
-		DeleteSVar("e_txtContentBox_3");
-		DeleteSVar("e_txtContentBox_4");
-		DeleteSVar("e_txtContentBox_5");
-		DeleteSVar("e_txtContentBox_6");
+	for (new i = 0; i < DIALOG_STYLE1_ITEMSPERPAGE; i++) {
+		TextDrawDestroy(g_txtDialogModels[i]);
+	}
 
-		TextDrawDestroy(g_DialogBase[e_txtScrollUp][0]);
-		TextDrawDestroy(g_DialogBase[e_txtScrollUp][1]);
-		DeleteSVar("e_txtScrollUp_0");
-		DeleteSVar("e_txtScrollUp_1");
-
-		TextDrawDestroy(g_DialogBase[e_txtScrollDown][0]);
-		TextDrawDestroy(g_DialogBase[e_txtScrollDown][1]);
-		DeleteSVar("e_txtScrollDown_0");
-		DeleteSVar("e_txtScrollDown_1");
-
-		TextDrawDestroy(g_DialogBase[e_txtButtonLeft][0]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonLeft][1]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonLeft][2]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonLeft][3]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonLeft][4]);
-		DeleteSVar("e_txtButtonLeft_0");
-		DeleteSVar("e_txtButtonLeft_1");
-		DeleteSVar("e_txtButtonLeft_2");
-		DeleteSVar("e_txtButtonLeft_3");
-		DeleteSVar("e_txtButtonLeft_4");
-
-		TextDrawDestroy(g_DialogBase[e_txtButtonRight][0]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonRight][1]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonRight][2]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonRight][3]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonRight][4]);
-		DeleteSVar("e_txtButtonRight_0");
-		DeleteSVar("e_txtButtonRight_1");
-		DeleteSVar("e_txtButtonRight_2");
-		DeleteSVar("e_txtButtonRight_3");
-		DeleteSVar("e_txtButtonRight_4");
-
-		TextDrawDestroy(g_DialogBase[e_txtButtonCenter][0]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonCenter][1]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonCenter][2]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonCenter][3]);
-		TextDrawDestroy(g_DialogBase[e_txtButtonCenter][4]);
-		DeleteSVar("e_txtButtonCenter_0");
-		DeleteSVar("e_txtButtonCenter_1");
-		DeleteSVar("e_txtButtonCenter_2");
-		DeleteSVar("e_txtButtonCenter_3");
-		DeleteSVar("e_txtButtonCenter_4");
-
-		new
-		    t_sVarname[40]
-		;
-		for (new i = 0; i < DIALOG_STYLE1_ITEMSPERPAGE; i++) {
-			TextDrawDestroy(g_txtDialogModels[i]);
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogModels_%i", i);
-			DeleteSVar(t_sVarname);
-		}
-
-		for (new i = 0; i < DIALOG_STYLE2_ITEMSPERPAGE; i++) {
-			TextDrawDestroy(g_txtDialogModels_List[i]);
-			TextDrawDestroy(g_txtDialogBars_List[i]);
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogModels_List_%i", i);
-			DeleteSVar(t_sVarname);
-			format(t_sVarname, sizeof(t_sVarname), "g_txtDialogBars_List_%i", i);
-			DeleteSVar(t_sVarname);
-		}
+	for (new i = 0; i < DIALOG_STYLE2_ITEMSPERPAGE; i++) {
+		TextDrawDestroy(g_txtDialogModels_List[i]);
+		TextDrawDestroy(g_txtDialogBars_List[i]);
 	}
 
 #if defined FILTERSCRIPT
@@ -810,12 +707,12 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 			g_PlayerDialogInfo[playerid][e_pDialogId] = -1;
 			g_PlayerDialogInfo[playerid][e_pDialogListitem] = -1;
 			DeletePVar(playerid, "Dialog_Info");
-	   		
+
 			CallRemoteFunction("OnDialogResponse", "iiiis", playerid, t_iId, 0, t_iListitem, "(null)");
 		}
 		else if (clickedid == g_DialogBase[e_txtButtonLeft][4] || clickedid == g_DialogBase[e_txtButtonCenter][4]) {
 			Dialog_Hide(playerid, true);
-			
+
 			new
 	   			t_iId = g_PlayerDialogInfo[playerid][e_pDialogId],
 	   			t_iListitem = g_PlayerDialogInfo[playerid][e_pDialogListitem]
@@ -933,6 +830,8 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 				g_PlayerDialogInfo[playerid][e_pDialogTick] = GetTickCount();
 			}
 		}
+		
+		return 1;
 	}
 	else {
  		DeletePVar(playerid, "Dialog_Cancel");
