@@ -37,7 +37,7 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 #define DIALOG_MODELNONSELECTION_COLOR 	(169090660)
 #define DIALOG_BARNONSELECTION_COLOR 	(169093220)
 
-#define DIALOG_MAXINFO_SIZE 			(1024)
+#define DIALOG_MAX_LISTITEMS 			(1024)
 
 #define DIALOG_STYLE1_ITEMSPERPAGE 		(6 * 4)
 #define DIALOG_STYLE2_ITEMSPERPAGE 		(5)
@@ -149,6 +149,12 @@ stock static Dialog_PTDCreate(&PlayerText:var, playerid, Float:posX, Float:posY,
 	public OnGameModeInit() {
 #endif
 
+	for (new i; i < MAX_PLAYERS; i++) {
+		g_PlayerDialogInfo[i][e_pDialogStyle] = -1;
+		g_PlayerDialogInfo[i][e_pDialogId] = -1;
+		g_PlayerDialogInfo[i][e_pDialogListitem] = -1;
+	}
+
 	Dialog_TDCreate(g_DialogBase[e_txtHeaderBox], 173.000000, 122.000000, "_", 50, 1, 0.000000, 0.599999, -1, 0, 0, 1, 1, 1, 200, 462.000000, 19.000000);
 
 	Dialog_TDCreate(g_DialogBase[e_txtContentBox][0], 173.000000, 131.000000, "_", 50, 1, 0.000000, 21.599998, -1, 0, 0, 1, 1, 1, 150, 462.000000, 19.000000);
@@ -204,7 +210,7 @@ stock static Dialog_PTDCreate(&PlayerText:var, playerid, Float:posX, Float:posY,
 		Dialog_TDCreate(g_txtDialogModels_List[i], 178.000000, (134.000000 + (33.0 * i)), "_", DIALOG_MODELNONSELECTION_COLOR, 5, 0.129997, 0.799997, -1, 0, 0, 1, 1, 1, 0, 34.000000, 30.000000);
 		Dialog_TDCreate(g_txtDialogBars_List[i], 177.000000, (134.000000 + (33.0 * i)), "ld_plan:tvbase", 50, 4, 0.129997, 0.799997, DIALOG_BARNONSELECTION_COLOR, 0, 0, 1, 1, 1, 0, 274.000000, 32.000000, .selectable = 1);
 	}
-	
+
 #if defined FILTERSCRIPT
 	    #if defined Dialog_OnFilterScriptInit
 			return Dialog_OnFilterScriptInit();
@@ -254,25 +260,25 @@ stock static Dialog_PTDCreate(&PlayerText:var, playerid, Float:posX, Float:posY,
 	TextDrawDestroy(g_DialogBase[e_txtContentBox][4]);
 	TextDrawDestroy(g_DialogBase[e_txtContentBox][5]);
 	TextDrawDestroy(g_DialogBase[e_txtContentBox][6]);
-	
+
 	TextDrawDestroy(g_DialogBase[e_txtScrollUp][0]);
 	TextDrawDestroy(g_DialogBase[e_txtScrollUp][1]);
-		
+
 	TextDrawDestroy(g_DialogBase[e_txtScrollDown][0]);
 	TextDrawDestroy(g_DialogBase[e_txtScrollDown][1]);
-		
+
 	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][0]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][1]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][2]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][3]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonLeft][4]);
-		
+
 	TextDrawDestroy(g_DialogBase[e_txtButtonRight][0]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonRight][1]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonRight][2]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonRight][3]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonRight][4]);
-	
+
 	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][0]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][1]);
 	TextDrawDestroy(g_DialogBase[e_txtButtonCenter][2]);
@@ -529,7 +535,7 @@ stock static Dialog_ShowListitem(playerid, index, model, label[], bool:selected 
 
 stock static Dialog_ShowList(playerid, info[], page, selected) {
 	new
-	    t_sSplit[DIALOG_MAXINFO_SIZE][200],
+	    t_sSplit[DIALOG_MAX_LISTITEMS][200],
 	    t_iSplitSize = Dialog_Split(info, t_sSplit, '\n'),
 	    t_iSplitItems
 	;
@@ -692,8 +698,8 @@ stock Dialog_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], butt
 public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 	if (GetPVarType(playerid, "Dialog_Cancel") == PLAYER_VARTYPE_NONE && g_PlayerDialogInfo[playerid][e_pDialogId] >= 0) {
 		new
-			t_sSplit[DIALOG_MAXINFO_SIZE][30],
-   			t_sInfo[DIALOG_MAXINFO_SIZE * 2]
+			t_sSplit[DIALOG_MAX_LISTITEMS][200],
+   			t_sInfo[DIALOG_MAX_LISTITEMS * 200]
 		;
 
 		if (clickedid == Text:INVALID_TEXT_DRAW || clickedid == g_DialogBase[e_txtButtonRight][4]) {
@@ -830,7 +836,7 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 				g_PlayerDialogInfo[playerid][e_pDialogTick] = GetTickCount();
 			}
 		}
-		
+
 		return 1;
 	}
 	else {
@@ -889,7 +895,7 @@ stock ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[
 		Dialog_Hide(playerid, false);
 
 		new
-		    sBuffer[DIALOG_MAXINFO_SIZE]
+		    sBuffer[DIALOG_MAX_LISTITEMS * 200]
 		;
 		format(sBuffer, sizeof(sBuffer), "%i\n%s", models[0], labels[0]);
 		for (new i = 1; i < size1; i++) {
@@ -939,7 +945,7 @@ stock ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[
 #undef DIALOG_SELECTION_COLOR
 #undef DIALOG_MODELNONSELECTION_COLOR
 #undef DIALOG_BARNONSELECTION_COLOR
-#undef DIALOG_MAXINFO_SIZE
+#undef DIALOG_MAX_LISTITEMS
 #undef DIALOG_STYLE1_ITEMSPERPAGE
 #undef DIALOG_STYLE2_ITEMSPERPAGE
 #undef Dialog_CountPages
