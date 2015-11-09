@@ -1,3 +1,8 @@
+#if defined _dialogs_included
+	#endinput
+#endif
+#define _dialogs_included
+
 /*
 	Dialogs Include (dialogs.inc) - Version 2.0.3
 	* The one and only include which adds up new dialog styles to SAMP dialogs GUI.
@@ -33,18 +38,37 @@ public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
 #define DIALOG_STYLE_PREVMODEL 			(6)
 #define DIALOG_STYLE_PREVMODEL_LIST 	(DIALOG_STYLE_PREVMODEL + 1)
 
+#if ! defined DIALOG_SELECTION_COLOR
 #define DIALOG_SELECTION_COLOR 			(1677721750)
+#endif
+
+#if ! defined DIALOG_MODELNONSELECTION_COLOR
 #define DIALOG_MODELNONSELECTION_COLOR 	(169090660)
+#endif
+
+#if ! defined DIALOG_BARNONSELECTION_COLOR
 #define DIALOG_BARNONSELECTION_COLOR 	(169093220)
+#endif
 
-#define DIALOG_MAX_LISTITEMS 			(1024)
+#if ! defined DIALOG_MAX_LISTITEMS
+	#define DIALOG_MAX_LISTITEMS 			(500)
+#endif
 
-#define DIALOG_STYLE1_ITEMSPERPAGE 		(6 * 4)
-#define DIALOG_STYLE2_ITEMSPERPAGE 		(5)
+#if ! defined DIALOG_MAX_LISTITEM_SIZE
+	#define DIALOG_MAX_LISTITEM_SIZE		(150)
+#endif
+
+#if ! defined DIALOG_STYLE1_ITEMSPERPAGE
+	#define DIALOG_STYLE1_ITEMSPERPAGE 		(6 * 4)
+#endif
+
+#if ! defined DIALOG_STYLE2_ITEMSPERPAGE
+	#define DIALOG_STYLE2_ITEMSPERPAGE 		(5)
+#endif
 
 #define Dialog_CountPages(%0,%1) 		(((%0)-1)/(%1)+1)
 
-#pragma dynamic 						(1000000)
+#pragma dynamic 						(DIALOG_MAX_LISTITEMS * DIALOG_MAX_LISTITEM_SIZE * 4)
 
 enum e_DIALOG_BASE {
 	Text:   	e_txtHeaderBox,
@@ -535,7 +559,7 @@ stock static Dialog_ShowListitem(playerid, index, model, label[], bool:selected 
 
 stock static Dialog_ShowList(playerid, info[], page, selected) {
 	new
-	    t_sSplit[DIALOG_MAX_LISTITEMS][200],
+	    t_sSplit[DIALOG_MAX_LISTITEMS][DIALOG_MAX_LISTITEM_SIZE],
 	    t_iSplitSize = Dialog_Split(info, t_sSplit, '\n'),
 	    t_iSplitItems
 	;
@@ -698,8 +722,8 @@ stock Dialog_ShowPlayerDialog(playerid, dialogid, style, caption[], info[], butt
 public OnPlayerClickTextDraw(playerid, Text:clickedid) {
 	if (GetPVarType(playerid, "Dialog_Cancel") == PLAYER_VARTYPE_NONE && g_PlayerDialogInfo[playerid][e_pDialogId] >= 0) {
 		new
-			t_sSplit[DIALOG_MAX_LISTITEMS][200],
-   			t_sInfo[DIALOG_MAX_LISTITEMS * 200]
+			t_sSplit[DIALOG_MAX_LISTITEMS][DIALOG_MAX_LISTITEM_SIZE],
+   			t_sInfo[DIALOG_MAX_LISTITEMS * DIALOG_MAX_LISTITEM_SIZE]
 		;
 
 		if (clickedid == Text:INVALID_TEXT_DRAW || clickedid == g_DialogBase[e_txtButtonRight][4]) {
@@ -895,7 +919,7 @@ stock ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[
 		Dialog_Hide(playerid, false);
 
 		new
-		    sBuffer[DIALOG_MAX_LISTITEMS * 200]
+		    sBuffer[DIALOG_MAX_LISTITEMS * DIALOG_MAX_LISTITEM_SIZE]
 		;
 		format(sBuffer, sizeof(sBuffer), "%i\n%s", models[0], labels[0]);
 		for (new i = 1; i < size1; i++) {
@@ -946,6 +970,7 @@ stock ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[
 #undef DIALOG_MODELNONSELECTION_COLOR
 #undef DIALOG_BARNONSELECTION_COLOR
 #undef DIALOG_MAX_LISTITEMS
+#undef DIALOG_MAX_LISTITEM_SIZE
 #undef DIALOG_STYLE1_ITEMSPERPAGE
 #undef DIALOG_STYLE2_ITEMSPERPAGE
 #undef Dialog_CountPages
