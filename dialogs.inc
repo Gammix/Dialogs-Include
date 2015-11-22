@@ -4,7 +4,7 @@
 #define _dialogs_included
 
 /*
-	Dialogs Include (dialogs.inc) - Version 2.0.3
+	Dialogs Include (dialogs.inc) - Version 2.1.0
 	* The one and only include which adds up new dialog styles to SAMP dialogs GUI.
 	* Current new dialog styles:
  		- DIALOG_STYLE_PREVMODEL
@@ -28,6 +28,7 @@ native Dialog_GetStyle(playerid);
 native Dialog_GetId(playerid);
 native Dialog_GetListitem(playerid);
 native Dialog_GetInfo(playerid, info[], maxlength = sizeof(info));
+native Dialog_SetListitem(playerid, listitem, string[] = "", model = -1, Float:x = -1000.0, Float:y = -1000.0, Float:z = -1000.0, Float:zoom = -1000.0, font = -1, Float:fontsize = 0.0);
 native _
 native ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[], labels[][], button1[], button2[], size1 = sizeof(models), size2 = sizeof(labels));
 
@@ -897,6 +898,70 @@ stock Dialog_GetListitem(playerid) {
 
 stock Dialog_GetInfo(playerid, info[], maxlength = sizeof(info)) {
 	return GetPVarString(playerid, "Dialog_Info", info, maxlength);
+}
+
+stock Dialog_SetListitem(playerid, listitem, string[] = "", model = -1, Float:x = -1000.0, Float:y = -1000.0, Float:z = -1000.0, Float:zoom = -1000.0, font = -1, Float:fontsize = 0.0) {
+	if (Dialog_GetStyle(playerid) == DIALOG_STYLE_PREVMODEL) {
+		new
+  			t_iIndex = (listitem > DIALOG_STYLE1_ITEMSPERPAGE) ? (listitem - (floatround(listitem / DIALOG_STYLE1_ITEMSPERPAGE, floatround_floor) * DIALOG_STYLE1_ITEMSPERPAGE)) : (listitem)
+		;
+		if (string[0]) {
+			PlayerTextDrawSetString(playerid, g_txtPlayerDialogLabels[playerid][t_iIndex], string);
+			PlayerTextDrawShow(playerid, g_txtPlayerDialogLabels[playerid][t_iIndex]);
+		}
+
+		if (model != -1) {
+			TextDrawSetPreviewModel(g_txtDialogModels[t_iIndex], model);
+    		TextDrawShowForPlayer(playerid, g_txtDialogModels[t_iIndex]);
+	  	}
+
+	  	if (x != -1000.0 && y != -1000.0 && z != -1000.0 && zoom != -1000.0) {
+	  		TextDrawSetPreviewRot(g_txtDialogModels[t_iIndex], x, y, z, zoom);
+	    	TextDrawShowForPlayer(playerid, g_txtDialogModels[t_iIndex]);
+		}
+
+		if (font != -1) {
+		    PlayerTextDrawFont(playerid, g_txtPlayerDialogLabels[playerid][t_iIndex], font);
+			PlayerTextDrawShow(playerid, g_txtPlayerDialogLabels[playerid][t_iIndex]);
+		}
+
+		if (fontsize != 0.0) {
+		    PlayerTextDrawLetterSize(playerid, g_txtPlayerDialogLabels[playerid][t_iIndex], 0.140000 + fontsize, 0.899999 + fontsize);
+			PlayerTextDrawShow(playerid, g_txtPlayerDialogLabels[playerid][t_iIndex]);
+		}
+	}
+	else
+	{
+		new
+  			t_iIndex = (listitem > DIALOG_STYLE2_ITEMSPERPAGE) ? (listitem - (floatround(listitem / DIALOG_STYLE2_ITEMSPERPAGE, floatround_floor) * DIALOG_STYLE2_ITEMSPERPAGE)) : (listitem)
+		;
+		if (string[0]) {
+			PlayerTextDrawSetString(playerid, g_txtPlayerDialogLabels_List[playerid][t_iIndex], string);
+			PlayerTextDrawShow(playerid, g_txtPlayerDialogLabels_List[playerid][t_iIndex]);
+		}
+
+		if (model != -1) {
+			TextDrawSetPreviewModel(g_txtDialogModels_List[t_iIndex], model);
+    		TextDrawShowForPlayer(playerid, g_txtDialogModels_List[t_iIndex]);
+	  	}
+
+	  	if (x != -1000.0 && y != -1000.0 && z != -1000.0 && zoom != -1000.0) {
+	  		TextDrawSetPreviewRot(g_txtDialogModels_List[t_iIndex], x, y, z, zoom);
+	    	TextDrawShowForPlayer(playerid, g_txtDialogModels_List[t_iIndex]);
+		}
+
+		if (font != -1) {
+		    PlayerTextDrawFont(playerid, g_txtPlayerDialogLabels_List[playerid][t_iIndex], font);
+			PlayerTextDrawShow(playerid, g_txtPlayerDialogLabels_List[playerid][t_iIndex]);
+		}
+
+		if (fontsize != 0.0) {
+		    PlayerTextDrawLetterSize(playerid, g_txtPlayerDialogLabels_List[playerid][t_iIndex], 0.099999 + fontsize, 0.599997 + fontsize);
+			PlayerTextDrawShow(playerid, g_txtPlayerDialogLabels_List[playerid][t_iIndex]);
+		}
+	}
+
+	return true;
 }
 
 stock ShowPlayerPreviewModelDialog(playerid, dialogid, style, caption[], models[], labels[][], button1[], button2[], size1 = sizeof(models), size2 = sizeof(labels)) {
