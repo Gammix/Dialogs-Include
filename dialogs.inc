@@ -412,7 +412,8 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 
 				CancelSelectTextDraw(playerid);
 
-				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
+				if (funcidx("OnDialogResponse") != -1)
+					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
 
 				pDialogId[playerid] = -1;
 				pDialogStyle[playerid] = -1;
@@ -456,7 +457,8 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 
 				CancelSelectTextDraw(playerid);
 
-				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
+				if (funcidx("OnDialogResponse") != -1)
+					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
 
 				pDialogId[playerid] = -1;
 				pDialogStyle[playerid] = -1;
@@ -472,7 +474,8 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 
 				CancelSelectTextDraw(playerid);
 
-				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
+				if (funcidx("OnDialogResponse") != -1)
+					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
 
 				pDialogId[playerid] = -1;
 				pDialogStyle[playerid] = -1;
@@ -537,7 +540,8 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 
 							CancelSelectTextDraw(playerid);
 
-							CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
+							if (funcidx("OnDialogResponse") != -1)
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
 
 							pDialogId[playerid] = -1;
 							pDialogStyle[playerid] = -1;
@@ -602,7 +606,8 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 
 							CancelSelectTextDraw(playerid);
 
-							CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
+							if (funcidx("OnDialogResponse") != -1)
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
 
 							pDialogId[playerid] = -1;
 							pDialogStyle[playerid] = -1;
@@ -644,36 +649,18 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 		}
 	}
 
-    #if defined Dialog_OnPlayerClickPlayerText
-       	return Dialog_OnPlayerClickPlayerText(playerid, playertextid);
+    #if defined Dialog_OnPlayerClickPlayerTD
+       	return Dialog_OnPlayerClickPlayerTD(playerid, playertextid);
 	#else
 	   	return 0;
 	#endif
 }
-#if defined _ALS_OnPlayerClickPlayerText
+#if defined _ALS_OnPlayerClickPlayerTD
     #undef OnPlayerClickPlayerTextDraw
 #else
-    #define _ALS_OnPlayerClickPlayerText
+    #define _ALS_OnPlayerClickPlayerTD
 #endif
-#define OnPlayerClickPlayerTextDraw Dialog_OnPlayerClickPlayerText
-#if defined Dialog_OnPlayerClickPlayerText
-    forward Dialog_OnPlayerClickPlayerText(playerid, PlayerText:playertextid);
-#endif
-
-public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
-{
-    #if defined Dialog_OnDialogResponse
-       	return Dialog_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
-	#else
-	   	return 1;
-	#endif
-}
-#if defined _ALS_OnDialogResponse
-    #undef OnDialogResponse
-#else
-    #define _ALS_OnDialogResponse
-#endif
-#define OnDialogResponse Dialog_OnDialogResponse
-#if defined Dialog_OnDialogResponse
-    forward Dialog_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
+#define OnPlayerClickPlayerTextDraw Dialog_OnPlayerClickPlayerTD
+#if defined Dialog_OnPlayerClickPlayerTD
+    forward Dialog_OnPlayerClickPlayerTD(playerid, PlayerText:playertextid);
 #endif
