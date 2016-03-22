@@ -1,4 +1,4 @@
-// dialogs.inc - Adding new styles to SAMP GUI - v2.2.1
+// dialogs.inc - Adding new styles to SAMP GUI - v2.3.1
 // By Gammix
 
 #if defined _dialogs_included
@@ -283,7 +283,9 @@ static Dialog_SetPage(playerid, page, selected)
 						PlayerTextDrawSetString(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_LABEL][index]], Dialog_GetLabel(playerid, i));
 			  		}
 
+			    	PlayerTextDrawShow(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_BAR][index]]);
 			    	PlayerTextDrawShow(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_MODEL][index]]);
+			    	PlayerTextDrawShow(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_LABEL][index]]);
 
 		            pDialogListitem[playerid] = i;
 
@@ -354,22 +356,25 @@ stock Dialog_ShowToPlayer(playerid, dialogid, style, caption[], info[], button1[
 
 			   			pos = i + 1;
 
-			   			if (insert_label)
-					    {
-					        Dialog_SetLabel(playerid, pDialogTotalListitems[playerid], dest);
-							pDialogTotalListitems[playerid]++;
-						}
-						else
+						if (dest[0])
 		    			{
-		    			    Dialog_SetModel(playerid, pDialogTotalListitems[playerid], strval(dest));
-
-							if (i == j)
-							{
-							    pDialogTotalListitems[playerid]++;
+				   			if (insert_label)
+						    {
+						        Dialog_SetLabel(playerid, pDialogTotalListitems[playerid], dest);
+								pDialogTotalListitems[playerid]++;
 							}
-						}
+							else
+			    			{
+			    			    Dialog_SetModel(playerid, pDialogTotalListitems[playerid], strval(dest));
 
-						insert_label = (! insert_label);
+								if (i == j)
+								{
+								    pDialogTotalListitems[playerid]++;
+								}
+							}
+
+							insert_label = (! insert_label);
+						}
 					}
 				}
 
@@ -405,10 +410,9 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			{
 				Dialog_Exit(playerid);
 
-				if (funcidx("OnDialogResponse") != -1)
-				{
-				    CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
-				}
+				CancelSelectTextDraw(playerid);
+
+				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
 
 				pDialogId[playerid] = -1;
 				pDialogStyle[playerid] = -1;
@@ -417,10 +421,8 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 				pDialogPage[playerid] = 0;
 				pDialogListitem[playerid] = 0;
 				pDialogLastClick[playerid] = 0;
-
-				CancelSelectTextDraw(playerid);
 			}
-			
+
 			return 1;
 		}
 	}
@@ -452,10 +454,9 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			{
 				Dialog_Exit(playerid);
 
-				if (funcidx("OnDialogResponse") != -1)
-				{
-				    CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
-				}
+				CancelSelectTextDraw(playerid);
+
+				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
 
 				pDialogId[playerid] = -1;
 				pDialogStyle[playerid] = -1;
@@ -464,18 +465,14 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 				pDialogPage[playerid] = 0;
 				pDialogListitem[playerid] = 0;
 				pDialogLastClick[playerid] = 0;
-
-				CancelSelectTextDraw(playerid);
 			}
 			else if (playertextid == ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_BUTTON1]] || playertextid == ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_BUTTONC]])
 			{
 				Dialog_Exit(playerid);
 
+				CancelSelectTextDraw(playerid);
 
-				if (funcidx("OnDialogResponse") != -1)
-				{
-				    CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
-				}
+				CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
 
 				pDialogId[playerid] = -1;
 				pDialogStyle[playerid] = -1;
@@ -484,8 +481,6 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 				pDialogPage[playerid] = 0;
 				pDialogListitem[playerid] = 0;
 				pDialogLastClick[playerid] = 0;
-
-				CancelSelectTextDraw(playerid);
 			}
 			else if (playertextid == ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL_UP]])
 			{
@@ -540,10 +535,9 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 					    {
 							Dialog_Exit(playerid);
 
-							if (funcidx("OnDialogResponse") != -1)
-							{
-							    CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
-							}
+							CancelSelectTextDraw(playerid);
+
+							CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
 
 							pDialogId[playerid] = -1;
 							pDialogStyle[playerid] = -1;
@@ -552,8 +546,6 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 							pDialogPage[playerid] = 0;
 							pDialogListitem[playerid] = 0;
 							pDialogLastClick[playerid] = 0;
-
-							CancelSelectTextDraw(playerid);
 					    }
 					    else
 					    {
@@ -608,10 +600,9 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 					    {
 							Dialog_Exit(playerid);
 
-							if (funcidx("OnDialogResponse") != -1)
-							{
-							    CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
-							}
+							CancelSelectTextDraw(playerid);
+
+							CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
 
 							pDialogId[playerid] = -1;
 							pDialogStyle[playerid] = -1;
@@ -620,8 +611,6 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 							pDialogPage[playerid] = 0;
 							pDialogListitem[playerid] = 0;
 							pDialogLastClick[playerid] = 0;
-
-							CancelSelectTextDraw(playerid);
 					    }
 					    else
 					    {
@@ -669,4 +658,22 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 #define OnPlayerClickPlayerTextDraw Dialog_OnPlayerClickPlayerText
 #if defined Dialog_OnPlayerClickPlayerText
     forward Dialog_OnPlayerClickPlayerText(playerid, PlayerText:playertextid);
+#endif
+
+public OnDialogResponse(playerid, dialogid, response, listitem, inputtext[])
+{
+    #if defined Dialog_OnDialogResponse
+       	return Dialog_OnDialogResponse(playerid, dialogid, response, listitem, inputtext);
+	#else
+	   	return 1;
+	#endif
+}
+#if defined _ALS_OnDialogResponse
+    #undef OnDialogResponse
+#else
+    #define _ALS_OnDialogResponse
+#endif
+#define OnDialogResponse Dialog_OnDialogResponse
+#if defined Dialog_OnDialogResponse
+    forward Dialog_OnDialogResponse(playerid, dialogid, response, listitem, inputtext[]);
 #endif
