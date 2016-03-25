@@ -1,4 +1,4 @@
-// dialogs.inc - Adding new styles to SAMP GUI - v2.3.1
+// dialogs.inc - Adding new styles to SAMP GUI - v2.4
 // By Gammix
 
 #if defined _dialogs_included
@@ -31,6 +31,7 @@ static pDialogLastClick[MAX_PLAYERS];
 
 enum E_DIALOG_COMPONENT
 {
+	E_DIALOG_COMPONENT_SCROLL,
 	E_DIALOG_COMPONENT_SCROLL_UP,
 	E_DIALOG_COMPONENT_SCROLL_DOWN,
 	E_DIALOG_COMPONENT_BUTTON1,
@@ -103,6 +104,8 @@ static Dialog_Init(playerid, style, caption[], button1[], button2[])
 	Dialog_Create(playerid, 462.000000, 134.000000, "_", 50, 1, 0.000000, -0.300001, -1, 0, 0, 1, 1, 1, -106, 174.000000, 19.000000, .show = 1);
 	Dialog_Create(playerid, 462.000000, 304.000000, "_", 50, 1, 0.000000, -0.400001, -1, 0, 0, 1, 1, 1, -106, 173.000000, 19.000000, .show = 1);
 
+	pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL] = Dialog_Create(playerid, 0.000000, 0.000000, "_", 0, 1, 0.0, 0.0, 0);
+	
 	pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL_UP] = Dialog_Create(playerid, 453.000000, 133.000000, "LD_POOL:ball", 50, 4, 0.500000, 1.000000, -106, 0, 0, 1, 1, 1, 255, 7.000000, 9.00000, .selectable = 1, .show = 1);
 	Dialog_Create(playerid, 454.000000, 134.000000, "LD_BEAT:up", 255, 4, 0.500000, 1.000000, 255, 0, 0, 1, 1, 1, 255, 5.000000, 6.000000, .show = 1);
 
@@ -184,10 +187,10 @@ static Dialog_Exit(playerid)
   	for (new i; i < pDialogTotalListitems[playerid]; i++)
   	{
 		format(varname, sizeof (varname), "DialogModel_%i", i);
-  		DeletePVar(playerid, varname);
+  	    DeletePVar(playerid, varname);
 
 		format(varname, sizeof (varname), "DialogLabel_%i", i);
-  		DeletePVar(playerid, varname);
+	  	DeletePVar(playerid, varname);
   	}
 }
 
@@ -228,6 +231,15 @@ static Dialog_SetPage(playerid, page, selected)
 
     if (pDialogStyle[playerid] == DIALOG_STYLE_PREVMODEL)
 	{
+		PlayerTextDrawDestroy(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL]]);
+		pPool[playerid]--;
+
+		if (Dialog_CountPages(pDialogTotalListitems[playerid], (6 * 4)) > 1)
+		{
+			new Float:whiles = ((145.500000 + 16.200000) / Dialog_CountPages(pDialogTotalListitems[playerid], (6 * 4)));
+			pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL] = Dialog_Create(playerid, 455.000000, (144.000000 + (whiles * page)), "_", 0, 1, 0.000000, (whiles / 16.200000), 0, .usebox = 1, .boxcolor = DIALOG_SELECTION_COLOR, .textsizeX = 458.000000, .textsizeY = 0.000000, .show = 1);
+		}
+		
 		for (new i = ((page) * (6 * 4)); i < pDialogTotalListitems[playerid]; i++)
 		{
 		    if (index < (6 * 4))
@@ -261,6 +273,15 @@ static Dialog_SetPage(playerid, page, selected)
 	}
 	else
 	{
+		PlayerTextDrawDestroy(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL]]);
+		pPool[playerid]--;
+
+		if (Dialog_CountPages(pDialogTotalListitems[playerid], (5)) > 1)
+		{
+			new Float:whiles = ((145.500000 + 16.200000) / Dialog_CountPages(pDialogTotalListitems[playerid], (5)));
+			pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL] = Dialog_Create(playerid, 455.000000, (144.000000 + (whiles * page)), "_", 0, 1, 0.000000, (whiles / 16.200000), 0, .usebox = 1, .boxcolor = DIALOG_SELECTION_COLOR, .textsizeX = 458.000000, .textsizeY = 0.000000, .show = 1);
+		}
+		
 		for (new i = (page * 5); i < pDialogTotalListitems[playerid]; i++)
 		{
 		    if (index < 5)
@@ -306,17 +327,20 @@ public  Dialog_HideForPlayer(playerid)
 		{
 			Dialog_Exit(playerid);
 
+			pDialogStyle[playerid] = -1;
+
 			CancelSelectTextDraw(playerid);
 		}
 
 		default:
 		{
 		    ShowPlayerDialog(playerid, -1, 0, "", "", "", "");
+
+			pDialogStyle[playerid] = -1;
 		}
 	}
 
 	pDialogId[playerid] = -1;
-	pDialogStyle[playerid] = -1;
 	pDialogDualButtons[playerid] = false;
 	pDialogTotalListitems[playerid] = 0;
 	pDialogPage[playerid] = 0;
@@ -329,6 +353,17 @@ stock Dialog_ShowToPlayer(playerid, dialogid, style, caption[], info[], button1[
 	if (playerid < 0 || playerid >= MAX_PLAYERS)
 	{
 	    return false;
+	}
+
+	switch (pDialogStyle[playerid])
+	{
+		case DIALOG_STYLE_PREVMODEL,
+			 DIALOG_STYLE_PREVMODEL_LIST:
+		{
+			Dialog_Exit(playerid);
+
+			pDialogStyle[playerid] = -1;
+		}
 	}
 
 	CallRemoteFunction("Dialog_HideForPlayer", "i", playerid);
@@ -350,31 +385,34 @@ stock Dialog_ShowToPlayer(playerid, dialogid, style, caption[], info[], button1[
 				new pos;
 				for (new i, j = strlen(info); i <= j; i++)
 				{
-					if (info[i] == '\n' || i == j)
+				    if (info[i] == '\n' || i == j)
 					{
 						strmid((dest[0] = EOS, dest), info, pos, i);
 
 			   			pos = i + 1;
 
-						if (dest[0])
-		    			{
-				   			if (insert_label)
-						    {
-						        Dialog_SetLabel(playerid, pDialogTotalListitems[playerid], dest);
-								pDialogTotalListitems[playerid]++;
-							}
-							else
-			    			{
-			    			    Dialog_SetModel(playerid, pDialogTotalListitems[playerid], strval(dest));
-
-								if (i == j)
-								{
-								    pDialogTotalListitems[playerid]++;
-								}
-							}
-
-							insert_label = (! insert_label);
+						if (insert_label)
+						{
+	     					Dialog_SetLabel(playerid, pDialogTotalListitems[playerid], dest);
+							pDialogTotalListitems[playerid]++;
 						}
+						else
+			    		{
+			    		    if (! dest[0])
+			    		    {
+			    		        i++;
+			    		        continue;
+			    		    }
+
+			    		    if (i == j)
+			    		    {
+								pDialogTotalListitems[playerid]++;
+			    		    }
+
+			    			Dialog_SetModel(playerid, pDialogTotalListitems[playerid], strval(dest));
+						}
+
+						insert_label = (! insert_label);
 					}
 				}
 
@@ -410,13 +448,14 @@ public OnPlayerClickTextDraw(playerid, Text:clickedid)
 			{
 				Dialog_Exit(playerid);
 
+				pDialogStyle[playerid] = -1;
+
 				CancelSelectTextDraw(playerid);
 
-				if (funcidx("OnDialogResponse") != -1)
-					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
+    			if (funcidx("OnDialogResponse") != -1)
+					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "\1");
 
 				pDialogId[playerid] = -1;
-				pDialogStyle[playerid] = -1;
 				pDialogDualButtons[playerid] = false;
 				pDialogTotalListitems[playerid] = 0;
 				pDialogPage[playerid] = 0;
@@ -455,13 +494,14 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			{
 				Dialog_Exit(playerid);
 
+				pDialogStyle[playerid] = -1;
+
 				CancelSelectTextDraw(playerid);
 
 				if (funcidx("OnDialogResponse") != -1)
-					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "");
+					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 0, pDialogListitem[playerid], "\1");
 
 				pDialogId[playerid] = -1;
-				pDialogStyle[playerid] = -1;
 				pDialogDualButtons[playerid] = false;
 				pDialogTotalListitems[playerid] = 0;
 				pDialogPage[playerid] = 0;
@@ -472,13 +512,14 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			{
 				Dialog_Exit(playerid);
 
+				pDialogStyle[playerid] = -1;
+
 				CancelSelectTextDraw(playerid);
 
 				if (funcidx("OnDialogResponse") != -1)
-					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
+					CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "\1");
 
 				pDialogId[playerid] = -1;
-				pDialogStyle[playerid] = -1;
 				pDialogDualButtons[playerid] = false;
 				pDialogTotalListitems[playerid] = 0;
 				pDialogPage[playerid] = 0;
@@ -499,7 +540,7 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 			}
 			else if (playertextid == ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL_DOWN]])
 			{
-				if ((pDialogPage[playerid] + 1) > Dialog_CountPages(pDialogTotalListitems[playerid], ((pDialogStyle[playerid] == DIALOG_STYLE_PREVMODEL) ? (6 * 4) : (5))))
+				if ((pDialogPage[playerid] + 1) >= Dialog_CountPages(pDialogTotalListitems[playerid], ((pDialogStyle[playerid] == DIALOG_STYLE_PREVMODEL) ? (6 * 4) : (5))))
 				{
     				PlayerPlaySound(playerid, 1084, 0.0, 0.0, 0.0);
 				}
@@ -538,13 +579,14 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 					    {
 							Dialog_Exit(playerid);
 
+							pDialogStyle[playerid] = -1;
+
 							CancelSelectTextDraw(playerid);
 
 							if (funcidx("OnDialogResponse") != -1)
-								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "\1");
 
 							pDialogId[playerid] = -1;
-							pDialogStyle[playerid] = -1;
 							pDialogDualButtons[playerid] = false;
 							pDialogTotalListitems[playerid] = 0;
 							pDialogPage[playerid] = 0;
@@ -604,13 +646,14 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 					    {
 							Dialog_Exit(playerid);
 
+							pDialogStyle[playerid] = -1;
+
 							CancelSelectTextDraw(playerid);
 
 							if (funcidx("OnDialogResponse") != -1)
-								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "");
+								CallRemoteFunction("OnDialogResponse", "iiiis", playerid, pDialogId[playerid], 1, pDialogListitem[playerid], "\1");
 
 							pDialogId[playerid] = -1;
-							pDialogStyle[playerid] = -1;
 							pDialogDualButtons[playerid] = false;
 							pDialogTotalListitems[playerid] = 0;
 							pDialogPage[playerid] = 0;
@@ -664,3 +707,74 @@ public OnPlayerClickPlayerTextDraw(playerid, PlayerText:playertextid)
 #if defined Dialog_OnPlayerClickPlayerTD
     forward Dialog_OnPlayerClickPlayerTD(playerid, PlayerText:playertextid);
 #endif
+
+stock Dialog_SetListitem(playerid, listitem, str[], model = -1, Float:model_x = 0.0, Float:model_y = 0.0, Float:model_z = 0.0, Float:model_zoom = 1.0, model_color1 = -1, model_color2 = -1)
+{
+	if (playerid < 0 || playerid >= MAX_PLAYERS)
+	{
+	    return false;
+	}
+
+	if (pDialogStyle[playerid] == -1)
+	{
+	    return false;
+	}
+
+  	new index;
+
+    switch (pDialogStyle[playerid])
+	{
+		case DIALOG_STYLE_PREVMODEL,
+	      	 DIALOG_STYLE_PREVMODEL_LIST:
+		{
+		    if (listitem >= pDialogTotalListitems[playerid])
+		    {
+		        return false;
+			}
+
+			index = listitem - (floatround(Float:(listitem - (6 * 4)), floatround_floor) * (6 * 4));
+			if (index >= (6 * 4))
+			{
+			    return false;
+			}
+
+			if (model >= 0)
+			{
+				Dialog_SetModel(playerid, listitem, model);
+
+				PlayerTextDrawSetPreviewModel(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_MODEL][index]], model);
+				PlayerTextDrawSetPreviewRot(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_MODEL][index]], model_x, model_y, model_z, model_zoom);
+				PlayerTextDrawSetPreviewVehCol(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_MODEL][index]], model_color1, model_color2);
+
+				PlayerTextDrawShow(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_MODEL][index]]);
+			}
+
+			if (str[0])
+			{
+				Dialog_SetLabel(playerid, listitem, str);
+				PlayerTextDrawSetString(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_LABEL][index]], str);
+				PlayerTextDrawShow(playerid, ptxtDialog[playerid][pDialogComponents[playerid][E_DIALOG_COMPONENT_LABEL][index]]);
+			}
+		}
+	}
+
+	return true;
+}
+
+stock Dialog_GetListitem(playerid, listitem, str[], &model)
+{
+	if (playerid < 0 || playerid >= MAX_PLAYERS)
+	{
+	    return false;
+	}
+
+	if (pDialogStyle[playerid] == -1)
+	{
+	    return false;
+	}
+
+	format(str, 256, Dialog_GetLabel(playerid, listitem));
+	model = Dialog_GetModel(playerid, listitem);
+
+	return true;
+}
