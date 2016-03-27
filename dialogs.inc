@@ -236,8 +236,8 @@ static Dialog_SetPage(playerid, page, selected)
 
 		if (Dialog_CountPages(pDialogTotalListitems[playerid], (6 * 4)) > 1)
 		{
-			new Float:whiles = ((145.500000 + 16.200000) / Dialog_CountPages(pDialogTotalListitems[playerid], (6 * 4)));
-			pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL] = Dialog_Create(playerid, 455.000000, (144.000000 + (whiles * page)), "_", 0, 1, 0.000000, (whiles / 16.200000), 0, .usebox = 1, .boxcolor = DIALOG_SELECTION_COLOR, .textsizeX = 458.000000, .textsizeY = 0.000000, .show = 1);
+			new Float:whiles = (145.500000 / Dialog_CountPages(pDialogTotalListitems[playerid], (6 * 4)));
+			pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL] = Dialog_Create(playerid, 455.000000, (144.000000 + (whiles * page)), "_", 0, 1, 0.000000, (whiles / 8.83), 0, .usebox = 1, .boxcolor = DIALOG_SELECTION_COLOR, .textsizeX = 458.000000, .textsizeY = 0.000000, .show = 1);
   		}
 
 		for (new i = ((page) * (6 * 4)); i < pDialogTotalListitems[playerid]; i++)
@@ -287,8 +287,8 @@ static Dialog_SetPage(playerid, page, selected)
 
 		if (Dialog_CountPages(pDialogTotalListitems[playerid], (5)) > 1)
 		{
-			new Float:whiles = ((145.500000 + 16.200000) / Dialog_CountPages(pDialogTotalListitems[playerid], (5)));
-			pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL] = Dialog_Create(playerid, 455.000000, (144.000000 + (whiles * page)), "_", 0, 1, 0.000000, (whiles / 16.200000), 0, .usebox = 1, .boxcolor = DIALOG_SELECTION_COLOR, .textsizeX = 458.000000, .textsizeY = 0.000000, .show = 1);
+			new Float:whiles = (145.500000 / Dialog_CountPages(pDialogTotalListitems[playerid], (5)));
+			pDialogComponents[playerid][E_DIALOG_COMPONENT_SCROLL] = Dialog_Create(playerid, 455.000000, (144.000000 + (whiles * page)), "_", 0, 1, 0.000000, (whiles / 8.83), 0, .usebox = 1, .boxcolor = DIALOG_SELECTION_COLOR, .textsizeX = 458.000000, .textsizeY = 0.000000, .show = 1);
 		}
 
 		for (new i = (page * 5); i < pDialogTotalListitems[playerid]; i++)
