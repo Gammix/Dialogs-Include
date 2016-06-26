@@ -1,6 +1,6 @@
 /*
  * dialogs.inc
- * Version: v2.5.0 (last updated: 23 June, 2016)
+ * Version: v2.5.0 (last updated: 26 June, 2016)
  * By Gammix
  *
  * Functions:
