@@ -382,11 +382,6 @@ stock Dialog_ShowToPlayer(playerid, dialogid, style, caption[], info[], button1[
 	}
 
 	CallRemoteFunction("Dialog_HideForPlayer", "i", playerid);
-
-	if (dialogid < 0)
-	{
-	    return true;
-	}
 	
 	pDialogId[playerid] = dialogid;
 	pDialogStyle[playerid] = style;
@@ -396,6 +391,14 @@ stock Dialog_ShowToPlayer(playerid, dialogid, style, caption[], info[], button1[
 		case DIALOG_STYLE_PREVMODEL,
 			 DIALOG_STYLE_PREVMODEL_LIST:
 		{
+			if (dialogid < 0)
+			{
+				pDialogId[playerid] = -1;
+				pDialogStyle[playerid] = -1;
+				
+			    return true;
+			}
+	
 			Dialog_Init(playerid, style, caption, button1, button2);
 
 			new bool:insert_label;
